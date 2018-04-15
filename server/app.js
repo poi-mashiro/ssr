@@ -10,7 +10,7 @@ import Router from 'koa-router';
  *
  */
 import { createRenderer, createBundleRenderer } from 'vue-server-renderer';
-import createApp from '../dist/serverapp';
+// import createApp from '../dist/serverapp';
 import serverBundle from '../dist/vue-ssr-server-bundle.json';
 import clientManifest from '../dist/vue-ssr-client-manifest.json';
 
@@ -31,7 +31,7 @@ const app = new Koa();
 app.use(bodyParser());
 
 // 设置静态资源路径
-app.use(staticFlies(path.join(__dirname, './src')));
+app.use(staticFlies(path.join(__dirname, '../dist/')));
 
 app.use(async ctx => {
   console.log(ctx.url);
