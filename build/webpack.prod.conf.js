@@ -36,12 +36,22 @@ const prod = merge({}, baseConf, {
     runtimeChunk: {
       name: 'manifest'
     },
+    // minimizer: true, // [new UglifyJsPlugin({...})]
     splitChunks: {
+      chunks: 'async', // 必须三选一： "initial" | "all"(默认就是all) | "async"
+      minSize: 0, // 最小尺寸，默认0
+      minChunks: 1, // 最小 chunk ，默认1
+      // maxAsyncRequests: 1, // 最大异步请求数， 默认1
+      // maxInitialRequests: 1, // 最大初始化请求书，默认1
+      // name: () => {}, // 名称，此选项课接收 function
+      name: false,
       cacheGroups: {
-        commons: {
-          test: /[\\/]node_modules[\\/]/,
+        vendor: {
           name: 'vendor',
-          chunks: 'all'
+          chunks: 'all',
+          priority: -10,
+          reuseExistingChunk: true,
+          test: /node_modules\/(.*)\.js/
         }
       }
     }
