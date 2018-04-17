@@ -3,7 +3,6 @@ import fs from 'fs';
 import path from 'path';
 import bodyParser from 'koa-bodyparser';
 import staticFlies from 'koa-static';
-import Router from 'koa-router';
 
 /*
  * 引入vue ssr
@@ -38,8 +37,6 @@ app.use(async ctx => {
   if (ctx.req.url === '/favicon.ico') {
     return;
   }
-  const context = { url: ctx.req.url };
-
   const renderData = (ctx, renderer) => {
     const context = {
       url: ctx.url

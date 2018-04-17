@@ -7,14 +7,10 @@ export function createRouter() {
   return new Router({
     mode: 'history',
     routes: [
-      {
-        name: 'Home',
-        path: '/',
-        component: () => import('../components/A.vue')
-      },
-      { name: 'A', path: '/a', component: () => import('../components/A.vue') },
-      { name: 'B', path: '/b', component: () => import('../components/B.vue') },
-      { name: 'C', path: '/c', component: () => import('../components/C.vue') }
+      { path: '/', component: () => import('../components/A.vue') },
+      { path: '/a', component: () => import('../components/A.vue') },
+      { path: '/b', component: () => import('../components/B.vue') },
+      { path: '/c', component: () => import('../components/C.vue') }
     ]
   });
 }

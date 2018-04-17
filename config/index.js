@@ -2,7 +2,7 @@ const path = require('path')
 module.exports = {
   base: {
     path: path.resolve(__dirname, '../dist'),
-    publicPath: '/client/',
+    publicPath: '/',
     assetsPath: 'static'
   },
   dev: {
