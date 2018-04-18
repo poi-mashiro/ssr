@@ -1,5 +1,6 @@
 import path from 'path';
 import fs from 'fs';
+import LRU from 'lru-cache';
 import KoaRouter from 'koa-router';
 import { createBundleRenderer } from 'vue-server-renderer';
 // import { create } from 'domain';
@@ -13,6 +14,10 @@ const resolve = file => path.resolve(__dirname, file);
 const template = fs.readFileSync(resolve('src/index.html'), 'utf-8');
 const createRenderer = (serverBundle, clientManifest) =>
   createBundleRenderer(serverBundle, {
+    cache: LRU({
+      max: 1000,
+      maxAge: 1000 * 60 * 15
+    }),
     runInNewContext: false, // 推荐
     template, // （可选）页面模板
     clientManifest // （可选）客户端构建 manifest
@@ -87,9 +92,9 @@ export const ssr = async app => {
 
     ctx.type = 'html';
     ctx.status = status || ctx.status;
-    ctx.body = html
+    ctx.body = html;
     if (!isProduction) {
-      console.log(`request cost: ${Date.now() - s}ms`)
+      console.log(`request cost: ${Date.now() - s}ms`);
     }
   });
   app.use(router.routes()).use(router.allowedMethods());
