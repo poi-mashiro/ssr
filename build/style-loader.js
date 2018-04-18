@@ -1,7 +1,8 @@
 'use strict';
 const path = require('path');
 // 一个抽离出css的webpack插件！
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
+// const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 exports.cssLoader = function (options) {
   options = options || {}
@@ -36,10 +37,11 @@ exports.cssLoader = function (options) {
     // Extract CSS when that option is specified
     // (which is the case during production build)
     if (options.extract) {
-      return ExtractTextPlugin.extract({
-        use: loaders,
-        fallback: 'vue-style-loader'
-      })
+      // return ExtractTextPlugin.extract({
+      //   use: loaders,
+      //   fallback: 'vue-style-loader'
+      // })
+      return ['vue-style-loader', MiniCssExtractPlugin.loader].concat(loaders);
     } else {
       return ['vue-style-loader'].concat(loaders)
     }

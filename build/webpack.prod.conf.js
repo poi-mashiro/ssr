@@ -52,6 +52,12 @@ const prod = merge({}, baseConf, {
           priority: -10,
           reuseExistingChunk: true,
           test: /node_modules\/(.*)\.js/
+        },
+        styles: {
+          name: 'styles',
+          test: /\.css$/,
+          chunks: 'all',
+          enforce: true
         }
       }
     }

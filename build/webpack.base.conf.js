@@ -2,10 +2,11 @@ const path = require('path');
 // const webpack = require('webpack');
 const baseConfig = require('../config').base;
 const vueLoaderConfig = require('./vue-loader.conf.js');
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
+// const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const isProd = process.env.NODE_ENV === 'production';
 const resolve = dir => path.join(__dirname, '../code/client/', dir);
 const assetsPath = dir => path.posix.join(baseConfig.assetsPath, dir);
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = {
   mode: isProd ? 'production' : 'development',
@@ -73,8 +74,13 @@ module.exports = {
   },
   plugins: [
     // 抽离css
-    new ExtractTextPlugin({
-      filename: assetsPath('css/[name].[hash:7].css')
+    // new ExtractTextPlugin({
+    //   filename: assetsPath('css/[name].[hash:7].css')
+    // })
+    new MiniCssExtractPlugin({
+      // Options similar to the same options in webpackOptions.output// both options are optional
+      filename: '[name].[hash:7].css',
+      chunkFilename: '[id].[hash:7].css'
     })
   ]
 };
