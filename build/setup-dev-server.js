@@ -11,16 +11,20 @@ const readFile = (fs, file) =>
   fs.readFileSync(path.join(clientConfig.output.path, file), 'utf-8');
 
 module.exports = function setupDevServer(app, cb) {
-  let bundle, ready, template, clientManifest;
+  let bundle;
+  // let ready;
+  // let template;
+  let clientManifest;
+
+  // const readyPromise = new Promise(resolve => {
+  //   ready = resolve;
+  // });
   const update = () => {
-    if (bundle && template) {
-      cb(bundle, {
-        template
-        // clientManifest
-      });
+    if (bundle && clientManifest) {
+      cb(bundle, clientManifest);
     }
   };
-
+  // template = fs.readFileSync('src/index.html', 'utf-8');
   // client
   clientConfig.output.filename = '[name].js'; // 热更新不能跟 [chunkhash] 同用
   const clientCompiler = webpack(clientConfig);
@@ -37,22 +41,20 @@ module.exports = function setupDevServer(app, cb) {
   });
   app.use(devMiddleware);
   clientCompiler.plugin('done', stats => {
-    const fs = devMiddleware.fileSystem;
     stats = stats.toJson();
     stats.errors.forEach(err => console.error(err));
     stats.warnings.forEach(err => console.warn(err));
     if (stats.errors.length) return;
 
     console.log('client-dev...');
-    let filePath = path.join(clientConfig.output.path, 'index.html');
-    if (fs.existsSync(filePath)) {
-      // 读取内存模板
-      template = readFile(fs, 'index.html');
-    }
-    // clientManifest = JSON.parse(readFile(
-    //     fs,
-    //     'vue-ssr-client-manifest.json'
-    // ))
+    // let filePath = path.join(clientConfig.output.path, 'index.html');
+    // if (fs.existsSync(filePath)) {
+    //   // 读取内存模板
+    //   template = readFile(fs, 'index.html');
+    // }
+    clientManifest = JSON.parse(
+      readFile(devMiddleware.fileSystem, 'vue-ssr-client-manifest.json')
+    );
     update();
   });
   app.use(webpackHotMiddleware(clientCompiler));

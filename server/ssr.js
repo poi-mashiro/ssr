@@ -8,10 +8,10 @@ import { createBundleRenderer } from 'vue-server-renderer';
 // import clientManifest from '../dist/vue-ssr-client-manifest.json';
 
 const router = KoaRouter();
-const isProduction = process.env.Node_ENV === 'production';
+const isProduction = process.env.NODE_ENV === 'production';
 const resolve = file => path.resolve(__dirname, file);
 
-const template = fs.readFileSync(resolve('src/index.html'), 'utf-8');
+const template = fs.readFileSync(resolve('../src/index.html'), 'utf-8');
 const createRenderer = (serverBundle, clientManifest) =>
   createBundleRenderer(serverBundle, {
     cache: LRU({
@@ -41,35 +41,32 @@ const renderData = (ctx, renderer) => {
 
 export const ssr = async app => {
   let renderer;
+  console.log(isProduction);
   if (isProduction) {
-    const [serverBundle, clientManifest] = await Promise.all(
+    const [serverBundle, clientManifest] = await Promise.all([
       import('../dist/vue-ssr-server-bundle.json'),
       import('../dist/vue-ssr-client-manifest.json')
-    );
+    ]);
     renderer = createRenderer(serverBundle, clientManifest);
+    console.log(renderer);
   } else {
-    const createApp = await import('../src/entry-server');
-    // renderer = await createApp(context)
-    // .then(app => {
-    //   renderer.renderToString(app, (err, html) => {
-    //     console.log(err, html);
-    //     if (err) {
-    //       if (err.code === 404) {
-    //         ctx.status = 404;
-    //         ctx.body = 'Page not found';
-    //       } else {
-    //         ctx.status = 500;
-    //         ctx.body = 'Internal Server Error';
-    //       }
-    //     } else {
-    //       ctx.body = html;
-    //     }
-    //   });
+    let setupDevServer = await import('../build/setup-dev-server.js');
+    // console.log(setupDevServer);
+    setupDevServer(app, (serverBundle, clientManifest) => {
+      console.log('bundle callback..');
+      renderer = createRenderer(serverBundle, clientManifest);
+      console.log(11111, '\n\n\n' + renderer + '');
+    });
+    // require('../build/setup-dev-server.js')(app, (bundle, options) => {
+    //   console.log('bundle callback..');
+    //   renderer = createRenderer(bundle, options);
+    //   console.log(renderer);
     // });
   }
 
   router.get('*', async (ctx, next) => {
     // 提示webpack还在工作
+    console.log(renderer);
     if (!renderer) {
       ctx.type = 'html';
       return (ctx.body = 'waiting for compilation... refresh in a moment.');
