@@ -1,6 +1,5 @@
-import ajax from './ajax';
+import { ajax } from './ajax';
 
-export const fetchItem = id =>
-  new Promise((resolve, reject) => {
-    resolve('fanhui')
-  });
+export const fetchItem = id => ajax('get', '/api', { aaa: 123 });
+
+export const test = () => ajax('post', '/api', { aaa: 123 });

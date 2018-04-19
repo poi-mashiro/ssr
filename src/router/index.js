@@ -11,6 +11,7 @@ export function createRouter() {
       { path: '/a', component: () => import('../components/A.vue') },
       { path: '/b', component: () => import('../components/B.vue') },
       { path: '/c', component: () => import('../components/C.vue') }
+      // { path: '*', component: () => import('../views/NotFound.vue') }
     ]
   });
 }

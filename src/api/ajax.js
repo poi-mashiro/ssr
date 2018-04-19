@@ -1,14 +1,11 @@
 import axios from 'axios';
 
-let baseurl = 'localhost:3000';
+let baseurl = 'http://localhost:3000';
 
-export const ajax = (method, url, param) => {
+export const ajax = (method, url, param) =>
   axios({
-    method: 'method',
+    method: method,
     url: baseurl + url,
-    data: param
-  }).then(res => {
-    console.log(res)
-    return res.data
+    data: param,
+    responsetype: 'json'
   });
-}

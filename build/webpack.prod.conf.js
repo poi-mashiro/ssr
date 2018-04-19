@@ -10,7 +10,7 @@ const merge = require('webpack-merge');
 // 一个创建html入口文件的webpack插件！
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 // 一个拷贝文件的webpack插件！
-const CopyWebpackPlugin = require('copy-webpack-plugin');
+// const CopyWebpackPlugin = require('copy-webpack-plugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 // 资源路径
@@ -112,13 +112,13 @@ const prod = merge({}, baseConf, {
     new webpack.HashedModuleIdsPlugin(),
 
     // 将整个文件复制到构建输出指定目录下
-    new CopyWebpackPlugin([
-      {
-        from: path.resolve(__dirname, '../static'),
-        to: prodConf.assetsPath,
-        ignore: ['.*']
-      }
-    ]),
+    // new CopyWebpackPlugin([
+    //   {
+    //     from: path.resolve(__dirname, '../static'),
+    //     to: prodConf.assetsPath,
+    //     ignore: ['.*']
+    //   }
+    // ]),
 
     // html配置
     new HtmlWebpackPlugin({

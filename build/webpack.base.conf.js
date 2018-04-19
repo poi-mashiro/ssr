@@ -4,7 +4,7 @@ const baseConfig = require('../config').base;
 const vueLoaderConfig = require('./vue-loader.conf.js');
 // const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const isProd = process.env.NODE_ENV === 'production';
-const resolve = dir => path.join(__dirname, '../code/client/', dir);
+const resolve = dir => path.join(__dirname, '..', dir);
 const assetsPath = dir => path.posix.join(baseConfig.assetsPath, dir);
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
@@ -13,7 +13,7 @@ module.exports = {
   context: path.resolve(__dirname, '../'),
   output: {
     path: path.resolve(__dirname, '../dist'),
-    publicPath: '/',
+    publicPath: '/dist/',
     filename: '[name]-[chunkhash].js'
   },
   // 配置模块如何被解析
@@ -79,8 +79,8 @@ module.exports = {
     // })
     new MiniCssExtractPlugin({
       // Options similar to the same options in webpackOptions.output// both options are optional
-      filename: '[name].[hash:7].css',
-      chunkFilename: '[id].[hash:7].css'
+      filename: 'css/[name].[hash:7].css',
+      chunkFilename: 'css/[id].[hash:7].css'
     })
   ]
 };

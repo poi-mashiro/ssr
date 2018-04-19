@@ -1,9 +1,20 @@
 // entry-server.js
 import { createApp } from './app';
+
+const isDev = process.env.NODE_ENV !== 'production';
+
 export default context => {
   return new Promise((resolve, reject) => {
+    const s = isDev && Date.now();
     const { app, router, store } = createApp();
-    router.push(context.url);
+
+    const { url } = context;
+    const { fullPath } = router.resolve(url).route;
+
+    if (fullPath !== url) {
+      return reject({ url: fullPath });
+    }
+    router.push(url);
     router.onReady(() => {
       const matchedComponents = router.getMatchedComponents();
       if (!matchedComponents.length) {
@@ -21,6 +32,7 @@ export default context => {
         })
       )
         .then(() => {
+          isDev && console.log(`data pre-fetch: ${Date.now() - s}ms`);
           // 在所有预取钩子(preFetch hook) resolve 后，
           // 我们的 store 现在已经填充入渲染应用程序所需的状态。
           // 当我们将状态附加到上下文，
