@@ -1251,6 +1251,7 @@ const dev = merge(baseConf, {
   plugins: [
     // 开启HMR(热替换功能,替换更新部分,不重载页面！)
     new webpack.HotModuleReplacementPlugin(),
+    new webpack.NoEmitOnErrorsPlugin(),
 
     // 显示模块相对路径
     new webpack.NamedModulesPlugin(),
