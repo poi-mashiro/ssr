@@ -10,8 +10,9 @@
 
 #### 前言
 
-首先，明白自己是否真的需要 ssr ，需要自己从头搭环境，请阅读 [官方教程](https://ssr.vuejs.org/zh/)
-其次，如果必须要 ssr ，建议使用 [nuxt.js](https://zh.nuxtjs.org/)，如果想要直接控制整个流程，那么 nuxt.js 就不合适了再次，可以在 官方 的 [demo](https://github.com/vuejs/vue-hackernews-2.0/) 的基础上进行修改来开发页面部分，虽然不知道为什么我 npm run build npm start 之后，出不来页面，可能是获取数据的问题导致的
+首先，明白自己是否真的需要 ssr ，需要自己从头搭环境，请阅读 [官方教程](https://ssr.vuejs.org/zh/)  
+其次，如果必须要 ssr ，建议使用 [nuxt.js](https://zh.nuxtjs.org/)，如果想要直接控制整个流程，那么 nuxt.js 就不合适了  
+再次，可以在 官方 的 [demo](https://github.com/vuejs/vue-hackernews-2.0/) 的基础上进行修改来开发页面部分，虽然不知道为什么我 npm run build npm start 之后，出不来页面，可能是获取数据的问题导致的
 
 <span id = "1"></span>
 
@@ -23,8 +24,8 @@
   "scripts": {
     "start": "cross-env NODE_ENV=production node server/index.js",
     "prod": "npm run build && npm run start",
-    "dev": "nodemon server/index.js",
-    "build": "rimraf dist && npm run build:client && npm run build:server",
+    "dev": "nodemon server/index.js",  // 使用 nodemon 自动重启服务器
+    "build": "rimraf dist && npm run build:client && npm run build:server",  // 移除 dist 目录，再编译
     "build:client": "cross-env NODE_ENV=production webpack --config build/webpack.client.conf.js --colors --progress",
     "build:server": "cross-env NODE_ENV=production webpack --config build/webpack.server.conf.js --colors --progress",
     "analyz": "cross-env analyz_config_report=true npm run build:client"
