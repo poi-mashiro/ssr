@@ -14,8 +14,11 @@ app.use(async (ctx, next) => {
   if (ctx.url === '/favicon.ico') return;
   await next();
 });
-// gzip压缩
-app.use(compress());
+// gzip压缩   热更新不支持 gzip
+if (process.env.NODE_ENV === 'production') {
+  app.use(compress());
+}
+
 // 使用post处理中间件
 app.use(bodyParser());
 // 设置静态资源路径

@@ -26,7 +26,7 @@
   "scripts": {
     "start": "cross-env NODE_ENV=production node server/index.js",
     "prod": "npm run build && npm run start",
-    "dev": "nodemon server/index.js",  // 使用 nodemon 自动重启服务器
+    "dev": "nodemon server/index.js",  // 使用 nodemon 自动重启服务器, 注意热更新不支持 nodemon
     "build": "rimraf dist && npm run build:client && npm run build:server",  // 移除 dist 目录，再编译
     "build:client": "cross-env NODE_ENV=production webpack --config build/webpack.client.conf.js --colors --progress",
     "build:server": "cross-env NODE_ENV=production webpack --config build/webpack.server.conf.js --colors --progress",
@@ -941,8 +941,11 @@ app.use(async (ctx, next) => {
   if (ctx.url === '/favicon.ico') return;
   await next();
 });
-// gzip压缩
-app.use(compress());
+// gzip压缩   热更新不支持 gzip
+if (process.env.NODE_ENV === 'production') {
+  app.use(compress());
+}
+
 // 使用post处理中间件
 app.use(bodyParser());
 // 设置静态资源路径
@@ -977,7 +980,8 @@ const init = async () => {
 };
 init();
 ```
-npm run dev
+npm run dev   使用 nodemon 自动重启服务器, 注意热更新不支持 nodemon
+使用热更新开发时，请使用 node server/index.js
 或 npm run build 然后 npm start
 
 <span id = "4"></span>
