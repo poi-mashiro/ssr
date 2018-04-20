@@ -968,3 +968,5 @@ npm run dev
 个人感觉 最大的麻烦是 配置 dev server, 因为平常都是使用的 webpack-dev-server，然后改写 ssr 功能, 基础实现 官方文档比较全面，基本复制粘贴就能跑起来, 加上参考修改vue-cli init webpack 里的 webpack 配置  
 请确保静态资源路径没有 index.html 或 打包后的静态资源没有直接指向静态资源路径的'/'，否则服务器会返回 打包后的 index.html 而不走 ssr  
 
+css 压缩 个人参照 webpack 4 的推荐 使用了 mini css extract plugin 替代 extract-text-webpack-plugin  
+参考了 console.log 的结果， 修改了 build/style-loader.js 以及 webpack.base.conf.js
