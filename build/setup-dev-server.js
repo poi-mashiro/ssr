@@ -4,8 +4,8 @@ const MFS = require('memory-fs');
 const webpack = require('webpack');
 const clientConfig = require('./webpack.client.conf');
 const serverConfig = require('./webpack.server.conf');
-const webpackDevMiddleware = require('./koa/dev');
-const webpackHotMiddleware = require('./koa/hot');
+const webpackDevMiddleware = require('./dev');
+const webpackHotMiddleware = require('./hot');
 
 const readFile = (fs, file) =>
   fs.readFileSync(path.join(clientConfig.output.path, file), 'utf-8');
