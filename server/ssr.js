@@ -3,9 +3,6 @@ import fs from 'fs';
 import LRU from 'lru-cache';
 import KoaRouter from 'koa-router';
 import { createBundleRenderer } from 'vue-server-renderer';
-// import { create } from 'domain';
-// import serverBundle from '../dist/vue-ssr-server-bundle.json';
-// import clientManifest from '../dist/vue-ssr-client-manifest.json';
 
 const router = KoaRouter();
 const isProduction = process.env.NODE_ENV === 'production';

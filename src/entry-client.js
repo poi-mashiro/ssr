@@ -1,8 +1,26 @@
+import Vue from 'vue';
 import { createApp } from './app';
 const { app, router, store } = createApp();
 if (window.__INITIAL_STATE__) {
   store.replaceState(window.__INITIAL_STATE__);
 }
+
+Vue.mixin({
+  beforeRouteUpdate(to, from, next) {
+    const { asyncData } = this.$options;
+    if (asyncData) {
+      asyncData({
+        store: this.$store,
+        route: to
+      })
+        .then(next)
+        .catch(next);
+    } else {
+      next();
+    }
+  }
+});
+
 router.onReady(() => {
   // 添加路由钩子函数，用于处理 asyncData.
   // 在初始路由 resolve 后执行，
