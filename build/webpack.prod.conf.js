@@ -12,7 +12,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 // 一个拷贝文件的webpack插件！
 // const CopyWebpackPlugin = require('copy-webpack-plugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
-
+const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 // 资源路径
 const assetsPath = dir => path.posix.join(prodConf.assetsPath, dir);
 
@@ -28,7 +28,7 @@ const prod = merge({}, baseConf, {
   module: {
     rules: styleLoader.styleLoader({
       extract: true,
-      sourceMap: true
+      sourceMap: false
     })
   },
 
@@ -36,7 +36,7 @@ const prod = merge({}, baseConf, {
     runtimeChunk: {
       name: 'manifest'
     },
-    // minimizer: true, // [new UglifyJsPlugin({...})]
+    minimizer: [new OptimizeCSSAssetsPlugin()], // [new UglifyJsPlugin({...})]
     splitChunks: {
       chunks: 'async', // 必须三选一： "initial" | "all"(默认就是all) | "async"
       minSize: 0, // 最小尺寸，默认0

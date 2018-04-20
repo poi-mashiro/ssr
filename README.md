@@ -75,6 +75,7 @@
     "mini-css-extract-plugin": "^0.4.0",
     "node-notifier": "^5.2.1",
     "nodemon": "^1.17.3",
+    "optimize-css-assets-webpack-plugin": "^4.0.0",
     "rimraf": "^2.6.2",
     "stylus": "^0.54.5",
     "stylus-loader": "^3.0.2",
@@ -970,4 +971,5 @@ npm run dev
 请确保静态资源路径没有 index.html 或 打包后的静态资源没有直接指向静态资源路径的'/'，否则服务器会返回 打包后的 index.html 而不走 ssr  
 
 css 压缩 个人参照 webpack 4 的推荐 使用了 mini css extract plugin 替代 extract-text-webpack-plugin  
-参考了 console.log 的结果， 修改了 build/style-loader.js 以及 webpack.base.conf.js
+参考了 console.log 的结果， 修改了 build/style-loader.js 以及 webpack.base.conf.js , mini css 不能像 ETWP 那样从 vue-style-loader 接收代码，会报错，而 ETMP 是提取 vue-style-loader 处理过的css  
+webpack.prod.conf.js 中使用 optimize-css-assets-webpack-plugin 压缩css  

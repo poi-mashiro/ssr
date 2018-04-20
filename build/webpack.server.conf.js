@@ -22,8 +22,8 @@ module.exports = merge(baseConfig, {
 
   module: {
     rules: styleLoader.styleLoader({
-      extract: isProd,
-      sourceMap: isProd
+      extract: !isProd,
+      sourceMap: !isProd
     })
   },
 

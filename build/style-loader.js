@@ -39,17 +39,24 @@ exports.cssLoader = function(options) {
     // Extract CSS when that option is specified
     // (which is the case during production build)
     if (options.extract) {
+      // console.log(
+      //   '\r\n\r\n',
+      //   ExtractTextPlugin.extract({
+      //     use: loaders,
+      //     fallback: 'vue-style-loader'
+      //   }),
+      //   '\r\n\r\n',
+      //   [MiniCssExtractPlugin.loader, 'vue-style-loader'].concat(loaders)
+      // );
       // return ExtractTextPlugin.extract({
       //   use: loaders,
       //   fallback: 'vue-style-loader'
-      // })
+      // });
       // 根据
-      // console.log(ExtractTextPlugin.extract({
-      //   use: loaders,
-      //   fallback: 'vue-style-loader'
-      // }))
+
       // 的结果，配置 mini css extract plugin
-      return [MiniCssExtractPlugin.loader, 'vue-style-loader'].concat(loaders);
+      // console.log([MiniCssExtractPlugin.loader].concat(loaders));
+      return [MiniCssExtractPlugin.loader].concat(loaders);
     } else {
       return ['vue-style-loader'].concat(loaders);
     }
