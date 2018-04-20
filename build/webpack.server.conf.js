@@ -3,12 +3,12 @@ const path = require('path');
 // const vueLoaderConfig = require('./vue-loader.conf');
 const merge = require('webpack-merge');
 const styleLoader = require('./style-loader');
-const baseConf = require('../config').base;
+// const baseConf = require('../config').base;
 const baseConfig = require('./webpack.base.conf');
 const nodeExternals = require('webpack-node-externals');
 const VueSSRServerPlugin = require('vue-server-renderer/server-plugin');
 const isProd = process.env.NODE_ENV === 'production';
-const assetsPath = dir => path.posix.join(baseConf.assetsPath, dir);
+// const assetsPath = dir => path.posix.join(baseConf.assetsPath, dir);
 
 module.exports = merge(baseConfig, {
   mode: isProd ? 'production' : 'development',
@@ -57,69 +57,3 @@ module.exports = merge(baseConfig, {
     new VueSSRServerPlugin()
   ]
 });
-// function resolve (dir) {
-//   return path.join(__dirname, '..', dir);
-// }
-
-// module.exports = {
-//   context: path.resolve(__dirname, '../'),
-//   mode: 'production',
-//   entry: {
-//     serverapp: './src/entry-server.js'
-//   },
-//   output: {
-//     path: path.resolve(__dirname, '../dist'),
-//     filename: '[name].js',
-//     libraryTarget: 'commonjs2'
-//   },
-//   resolve: {
-//     extensions: ['.js', '.vue', '.json'],
-//     alias: {
-//       vue$: 'vue/dist/vue.esm.js',
-//       '@': resolve('src')
-//     }
-//   },
-//   module: {
-//     rules: [
-//       // ...(config.dev.useEslint ? [createLintingRule()] : []),
-//       {
-//         test: /\.vue$/,
-//         loader: 'vue-loader',
-//         options: vueLoaderConfig
-//       },
-//       {
-//         test: /\.js$/,
-//         loader: 'babel-loader',
-//         include: [
-//           resolve('src'),
-//           resolve('test'),
-//           resolve('node_modules/webpack-dev-server/client')
-//         ]
-//       }
-//       // {
-//       //   test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
-//       //   loader: 'url-loader',
-//       //   options: {
-//       //     limit: 10000,
-//       //     name: utils.assetsPath('img/[name].[hash:7].[ext]')
-//       //   }
-//       // },
-//       // {
-//       //   test: /\.(mp4|webm|ogg|mp3|wav|flac|aac)(\?.*)?$/,
-//       //   loader: 'url-loader',
-//       //   options: {
-//       //     limit: 10000,
-//       //     name: utils.assetsPath('media/[name].[hash:7].[ext]')
-//       //   }
-//       // },
-//       // {
-//       //   test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/,
-//       //   loader: 'url-loader',
-//       //   options: {
-//       //     limit: 10000,
-//       //     name: utils.assetsPath('fonts/[name].[hash:7].[ext]')
-//       //   }
-//       // }
-//     ]
-//   }
-// };

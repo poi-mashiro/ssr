@@ -6,6 +6,8 @@
 2.  [基础实现](#2)
 3.  [开发配置](#3)
 4.  [其他 和 注意点](#4)
+5.  [附配置](#5)
+
 <span id = "0"></span>
 
 #### 前言
@@ -129,9 +131,8 @@ eslint 配置省略，个人喜欢就行
 
 ```
   build            webpack 配置，及开发服务器（注： 个人未配置编译 服务端代码的webpack
-    koa
-      dev.js                 封装 webpack-dev-middleware
-      hot.js                 封装 webpack-hot-middleware
+    dev.js                 配置 webpack-dev-middleware
+    hot.js                 配置 webpack-hot-middleware
     setup-dev-server.js
     style-loader.js
     vue-loader.conf.js
@@ -220,7 +221,7 @@ B.vue
 ```
 <template>
  <div>
-   <p @click="testapi">123</p>
+   <p @click="testapi">点击post请求</p>
    <p>{{ aaa }}</p>
  </div>
 </template>
@@ -477,10 +478,13 @@ index.html  静态内容 vue-ssr-outlet 是 ssr 内容的注入位置 head 内�
 </html>
 ```
 ##### 查看效果
-简单配置webpack.server.js
+简单配置webpack.server.conf.js
 ```
 const path = require('path');
-const vueLoaderConfig = require('./vue-loader.conf');  // vueLoaderConfig 可以使用 vue-cli init template 中的 vue-loader.conf.js 和 utils.js 中提取出功能
+const vueLoaderConfig = require('./vue-loader.conf');  // vueLoaderConfig 可以使用 vue-cli init template 中的 vue-loader.conf.js 和 utils.js 中提取出功能, webpack 4 要安装 extract-text-webpack-plugin@next
+
+const ExtractTextPlugin = require('extract-text-webpack-plugin');  // 取决于 vueLoaderConfig 相关功能中使用哪个抽离css
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');  //  取决于 vueLoaderConfig 相关功能中使用哪个抽离css
 
 function resolve (dir) {
   return path.join(__dirname, '..', dir);
@@ -491,6 +495,7 @@ module.exports = {
   entry: {
     serverapp: './src/entry-server.js'
   },
+  target: 'node',
   output: {
     path: path.resolve(__dirname, '../dist'),
     filename: '[name].js',
@@ -520,7 +525,18 @@ module.exports = {
         ]
       }
     ]
-  }
+  },
+  plugins: [
+    // 抽离css
+    // new ExtractTextPlugin({
+    //   filename: assetsPath('css/[name].[hash:7].css')
+    // })
+    new MiniCssExtractPlugin({
+      // Options similar to the same options in webpackOptions.output// both options are optional
+      filename: 'css/[name].[hash].css',
+      chunkFilename: 'css/[id].[chunkhash].css'
+    })
+  ]
 };
 ```
 使用 npm run build:server 得到 serverapp.js  
@@ -599,7 +615,7 @@ require('./app.js');
 bash 中 node server/index.js 访问 localhost:3000 查看效果，这时的页面只有 静态html, 由于尚未编译客户端入口
 
 ##### vue 接管页面
-参考[官方教程：bundle render](https://ssr.vuejs.org/zh/bundle-renderer.html) [官方教程：构建配置](https://ssr.vuejs.org/zh/build-config.html)  
+参考[官方教程：bundle render](https://ssr.vuejs.org/zh/bundle-renderer.html)  [官方教程：构建配置](https://ssr.vuejs.org/zh/build-config.html)  
 修改 webpack 的配置
 使用 createBundleRenderer 渲染页面  
 修改server/app.js
@@ -653,7 +669,6 @@ app.use(async ctx => {
   if (ctx.req.url === '/favicon.ico') {
     return;
   }
-  const context = { url: ctx.req.url };
   const renderData = (ctx, renderer) => {
     const context = {
       url: ctx.url
@@ -682,7 +697,7 @@ app.listen(3000, () => {
 
 #### 3 开发配置
 配置 webpack 以及 实现 dev server  可以参考官方 demo
-build/koa/dev.js
+build/dev.js
 ```
 const devMiddleware = require('webpack-dev-middleware');
 module.exports = (compiler, opts) => {
@@ -709,7 +724,7 @@ module.exports = (compiler, opts) => {
   return Dev;
 };
 ```
-build/koa/hot.js
+build/hot.js
 ```
 const hotMiddleware = require('webpack-hot-middleware');
 const PassThrough = require('stream').PassThrough;
@@ -963,13 +978,525 @@ const init = async () => {
 init();
 ```
 npm run dev
+或 npm run build 然后 npm start
 
-<span id = "0"></span>
+<span id = "4"></span>
 
-#### 其他 和 注意点
+#### 4 其他 和 注意点
 个人感觉 最大的麻烦是 配置 dev server, 因为平常都是使用的 webpack-dev-server，然后改写 ssr 功能, 基础实现 官方文档比较全面，基本复制粘贴就能跑起来, 加上参考修改vue-cli init webpack 里的 webpack 配置  
 请确保静态资源路径没有 index.html 或 打包后的静态资源没有直接指向静态资源路径的'/'，否则服务器会返回 打包后的 index.html 而不走 ssr  
 
 css 压缩 个人参照 webpack 4 的推荐 使用了 mini css extract plugin 替代 extract-text-webpack-plugin  
 参考了 console.log 的结果， 修改了 build/style-loader.js 以及 webpack.base.conf.js , mini css 不能像 ETWP 那样从 vue-style-loader 接收代码，会报错，而 ETMP 是提取 vue-style-loader 处理过的css  
 webpack.prod.conf.js 中使用 optimize-css-assets-webpack-plugin 压缩css  
+
+服务端的其他功能开发，请参考 koa 文档及他人教程
+
+<span id = "5"></span>
+
+#### 5 附配置
+style-loader.js
+```
+'use strict';
+// const path = require('path');
+// 一个抽离出css的webpack插件！
+// const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+
+exports.cssLoader = function(options) {
+  options = options || {};
+
+  const cssLoader = {
+    loader: 'css-loader',
+    options: {
+      sourceMap: options.sourceMap
+    }
+  };
+
+  const postcssLoader = {
+    loader: 'postcss-loader',
+    options: {
+      sourceMap: options.sourceMap
+    }
+  };
+
+  // generate loader string to be used with extract text plugin
+  function generateLoaders(loader, loaderOptions) {
+    const loaders = options.usePostCSS
+      ? [cssLoader, postcssLoader]
+      : [cssLoader];
+
+    if (loader) {
+      loaders.push({
+        loader: loader + '-loader',
+        options: Object.assign({}, loaderOptions, {
+          sourceMap: options.sourceMap
+        })
+      });
+    }
+
+    // Extract CSS when that option is specified
+    // (which is the case during production build)
+    if (options.extract) {
+      // console.log(
+      //   '\r\n\r\n',
+      //   ExtractTextPlugin.extract({
+      //     use: loaders,
+      //     fallback: 'vue-style-loader'
+      //   }),
+      //   '\r\n\r\n',
+      //   [MiniCssExtractPlugin.loader, 'vue-style-loader'].concat(loaders)
+      // );
+      // return ExtractTextPlugin.extract({
+      //   use: loaders,
+      //   fallback: 'vue-style-loader'
+      // });
+      // console.log([MiniCssExtractPlugin.loader].concat(loaders));
+      return [MiniCssExtractPlugin.loader].concat(loaders);
+    } else {
+      return ['vue-style-loader'].concat(loaders);
+    }
+  }
+
+  // https://vue-loader.vuejs.org/en/configurations/extract-css.html
+  return {
+    css: generateLoaders(),
+    postcss: generateLoaders(),
+    less: generateLoaders('less'),
+    sass: generateLoaders('sass', { indentedSyntax: true }),
+    scss: generateLoaders('sass'),
+    stylus: generateLoaders('stylus'),
+    styl: generateLoaders('stylus')
+  };
+};
+
+// Generate loaders for standalone style files (outside of .vue)
+exports.styleLoader = function(options) {
+  const output = [];
+  const loaders = exports.cssLoader(options);
+
+  for (const extension in loaders) {
+    const loader = loaders[extension];
+    output.push({
+      test: new RegExp('\\.' + extension + '$'),
+      use: loader
+    });
+  }
+
+  return output;
+};
+
+```
+vue-loader.js
+```
+'use strict';
+const styleLoader = require('./style-loader');
+const isProd = process.env.NODE_ENV === 'production';
+
+module.exports = {
+  loaders: styleLoader.cssLoader({
+    sourceMap: !isProd,
+    extract: isProd
+  }),
+  transformToRequire: {
+    video: ['src', 'poster'],
+    source: 'src',
+    img: 'src',
+    image: 'xlink:href'
+  }
+};
+
+```
+webpack.base.conf.js
+```
+const path = require('path');
+// const webpack = require('webpack');
+const baseConfig = require('../config').base;
+const vueLoaderConfig = require('./vue-loader.conf.js');
+// const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const isProd = process.env.NODE_ENV === 'production';
+const resolve = dir => path.join(__dirname, '..', dir);
+const assetsPath = dir => path.posix.join(baseConfig.assetsPath, dir);
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+
+module.exports = {
+  mode: isProd ? 'production' : 'development',
+  context: path.resolve(__dirname, '../'),
+  output: {
+    path: path.resolve(__dirname, '../dist'),
+    publicPath: '/dist/',
+    filename: '[name]-[chunkhash].js'
+  },
+  // 配置模块如何被解析
+  resolve: {
+    // 自动解析文件扩展名(补全文件后缀)(从左->右)
+    // import hello from './hello'  （!hello.js? -> !hello.vue? -> !hello.json）
+    extensions: ['.js', '.vue', '.json'],
+
+    // 配置别名映射
+    alias: {
+      vue$: 'vue/dist/vue.esm.js',
+      src: resolve('src'),
+      components: resolve('src/components'),
+      assets: resolve('src/assets'),
+      views: resolve('src/views'),
+      store: resolve('src/store')
+    }
+  },
+  // 处理模块的规则(可在此处使用不同的loader来处理模块！)
+  module: {
+    rules: [
+      {
+        test: /\.js$/, // 资源路径
+        loader: 'babel-loader', // 该路径执行的loader
+        include: resolve('src') // 指定哪个文件loader
+      },
+      {
+        test: /\.vue$/,
+        loader: 'vue-loader',
+        // include: resolve('src'),
+        options: vueLoaderConfig
+      },
+      {
+        test: /\.(png|jpe?g|gif|svg|ico)(\?.*)?$/,
+        loader: 'url-loader',
+        options: {
+          limit: 10000,
+          name: assetsPath('img/[name].[hash:7].[ext]')
+        }
+      },
+      {
+        test: /\.(mp4|webm|ogg|mp3|wav|flac|aac)(\?.*)?$/,
+        loader: 'url-loader',
+        options: {
+          limit: 10000,
+          name: assetsPath('media/[name].[hash:7].[ext]')
+        }
+      },
+      {
+        test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/,
+        loader: 'url-loader',
+        options: {
+          limit: 10000,
+          name: assetsPath('fonts/[name].[hash:7].[ext]')
+        }
+      }
+    ]
+  },
+  plugins: [
+    // 抽离css
+    // new ExtractTextPlugin({
+    //   filename: assetsPath('css/[name].[hash:7].css')
+    // })
+    new MiniCssExtractPlugin({
+      // Options similar to the same options in webpackOptions.output// both options are optional
+      filename: 'css/[name].[hash].css',
+      chunkFilename: 'css/[id].[chunkhash].css'
+    })
+  ]
+};
+
+```
+webpack.client.conf.js
+```
+// const webpack = require('webpack');
+const path = require('path');
+const merge = require('webpack-merge');
+const VueSSRClientPlugin = require('vue-server-renderer/client-plugin');
+const isProd = process.env.NODE_ENV === 'production';
+let config = isProd
+  ? require('./webpack.prod.conf.js')
+  : require('./webpack.dev.conf.js');
+
+module.exports = merge(config, {
+  mode: isProd ? 'production' : 'development',
+  entry: {
+    app: path.resolve(__dirname, '../src/entry-client.js')
+  },
+  plugins: [new VueSSRClientPlugin()]
+});
+
+```
+webpack.dev.conf.js
+```
+'use strict';
+const path = require('path');
+const webpack = require('webpack');
+const styleLoader = require('./style-loader');
+const devConf = require('../config').dev; // 开发环境配置参数
+const baseConf = require('./webpack.base.conf'); // webpack基本配置
+
+// 一个webpack配置合并模块,可简单的理解为与Object.assign()功能类似！
+const merge = require('webpack-merge');
+// 一个创建html入口文件的webpack插件！
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+// 一个编译提示的webpack插件！
+const FriendlyErrorsPlugin = require('friendly-errors-webpack-plugin');
+// 发送系统通知的一个node模块！
+const notifier = require('node-notifier');
+
+const dev = merge(baseConf, {
+  mode: 'development',
+  module: {
+    rules: styleLoader.styleLoader({ extract: false, sourceMap: true })
+  },
+
+  // 生成sourceMaps(方便调试)
+  devtool: devConf.devtoolType,
+
+  plugins: [
+    // 开启HMR(热替换功能,替换更新部分,不重载页面！)
+    new webpack.HotModuleReplacementPlugin(),
+
+    // 显示模块相对路径
+    new webpack.NamedModulesPlugin(),
+
+    // 配置html入口信息
+    new HtmlWebpackPlugin({
+      filename: 'index.html',
+      template: path.resolve(__dirname, '../src/index.html'),
+      inject: true
+    }),
+
+    // 编译提示插件
+    new FriendlyErrorsPlugin({
+      compilationSuccessInfo: {
+        messages: [`Your application is running here: http:`]
+      },
+      onErrors: function (severity, errors) {
+        if (severity !== 'error') {
+          return;
+        }
+        const error = errors[0];
+        const filename = error.file.split('!').pop();
+        // console.log(filename)
+        // 编译出错时,右下角弹出错误提示！
+        notifier.notify({
+          title: 'blog',
+          message: severity + ': ' + error.name,
+          subtitle: filename || ''
+        });
+      }
+    })
+  ]
+});
+
+module.exports = dev;
+
+```
+webpack.prod.conf.js
+```
+'use strict';
+const path = require('path');
+const webpack = require('webpack');
+const styleLoader = require('./style-loader');
+const prodConf = require('../config').build; // 生产环境配置参数
+const baseConf = require('./webpack.base.conf'); // webpack基本配置
+
+// 一个webpack配置合并模块,可简单的理解为与Object.assign()功能类似！
+const merge = require('webpack-merge');
+// 一个创建html入口文件的webpack插件！
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+// 一个拷贝文件的webpack插件！
+// const CopyWebpackPlugin = require('copy-webpack-plugin');
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+// 资源路径
+const assetsPath = dir => path.posix.join(prodConf.assetsPath, dir);
+
+const prod = merge({}, baseConf, {
+  mode: 'production',
+  output: {
+    // 文件名
+    filename: assetsPath('js/[name].[chunkhash].min.js'),
+
+    // 用于打包require.ensure(代码分割)方法中引入的模块
+    chunkFilename: assetsPath('js/[name].[chunkhash].js')
+  },
+  module: {
+    rules: styleLoader.styleLoader({
+      extract: true,
+      sourceMap: false
+    })
+  },
+
+  optimization: {
+    runtimeChunk: {
+      name: 'manifest'
+    },
+    minimizer: [new OptimizeCSSAssetsPlugin()], // [new UglifyJsPlugin({...})]
+    splitChunks: {
+      chunks: 'async', // 必须三选一： "initial" | "all"(默认就是all) | "async"
+      minSize: 0, // 最小尺寸，默认0
+      minChunks: 1, // 最小 chunk ，默认1
+      // maxAsyncRequests: 1, // 最大异步请求数， 默认1
+      // maxInitialRequests: 1, // 最大初始化请求书，默认1
+      // name: () => {}, // 名称，此选项课接收 function
+      name: false,
+      cacheGroups: {
+        vendor: {
+          name: 'vendor',
+          chunks: 'all',
+          priority: -10,
+          reuseExistingChunk: true,
+          test: /node_modules\/(.*)\.js/
+        },
+        styles: {
+          name: 'styles',
+          test: /\.css$/,
+          chunks: 'all',
+          enforce: true
+        }
+      }
+    }
+    /*
+
+        optimization: {
+            splitChunks: {
+              chunks: "initial",         // 必须三选一： "initial" | "all"(默认就是all) | "async"
+              minSize: 0,                // 最小尺寸，默认0
+              minChunks: 1,              // 最小 chunk ，默认1
+              maxAsyncRequests: 1,       // 最大异步请求数， 默认1
+              maxInitialRequests: 1,    // 最大初始化请求书，默认1
+              name: () => {},              // 名称，此选项课接收 function
+              cacheGroups: {                 // 这里开始设置缓存的 chunks
+                priority: "0",                // 缓存组优先级 false | object |
+                vendor: {                   // key 为entry中定义的 入口名称
+                  chunks: "initial",        // 必须三选一： "initial" | "all" | "async"(默认就是异步)
+                  test: /react|lodash/,     // 正则规则验证，如果符合就提取 chunk
+                  name: "vendor",           // 要缓存的 分隔出来的 chunk 名称
+                  minSize: 0,
+                  minChunks: 1,
+                  enforce: true,
+                  maxAsyncRequests: 1,       // 最大异步请求数， 默认1
+                  maxInitialRequests: 1,    // 最大初始化请求书，默认1
+                  reuseExistingChunk: true   // 可设置是否重用该chunk（查看源码没有发现默认值）
+                }
+              }
+            }
+          },
+         */
+  },
+  plugins: [
+    // 压缩js
+    new UglifyJsPlugin({
+      uglifyOptions: {
+        compress: {
+          warnings: false,
+          drop_console: true, // 打包后去除console.log
+          collapse_vars: true, // 内嵌定义了但是只用到一次的变量
+          reduce_vars: true, // 提取出出现多次但是没有定义成变量去引用的静态值
+          pure_funcs: ['console.log']
+        }
+      },
+      sourceMap: prodConf.productionSourceMap,
+      parallel: true // 使用多进程并行运行来提高构建速度
+    }),
+
+    // 作用域提升,提升代码在浏览器执行速度
+    new webpack.optimize.ModuleConcatenationPlugin(),
+
+    // 根据模块相对路径生成四位数hash值作为模块id
+    new webpack.HashedModuleIdsPlugin(),
+
+    // 将整个文件复制到构建输出指定目录下, 开启这个，我不知道为什么打包后会有一个bulma.css 迷
+    // new CopyWebpackPlugin([
+    //   {
+    //     from: path.resolve(__dirname, '../static'),
+    //     to: prodConf.assetsPath,
+    //     ignore: ['.*']
+    //   }
+    // ]),
+
+    // html配置
+    new HtmlWebpackPlugin({
+      filename: 'index.html',
+      template: path.resolve(__dirname, '../src/index.html'),
+      // favicon: path.resolve(__dirname, '../static/favicon.ico'),
+      inject: true
+      // 压缩配置
+      // minify: {
+      //     //删除Html注释
+      //     // removeComments: true,
+      //     //去除空格
+      //     collapseWhitespace: true,
+      //     //去除属性引号
+      //     removeAttributeQuotes: true
+      // },
+    })
+  ]
+});
+
+// 查看打包内容
+if (process.env.analyz_config_report) {
+  const BundleAnalyzerPlugin = require('webpack-bundle-analyzer')
+    .BundleAnalyzerPlugin;
+  prod.plugins.push(new BundleAnalyzerPlugin());
+}
+
+module.exports = prod;
+
+```
+webpack.server.conf.js
+```
+const webpack = require('webpack');
+const path = require('path');
+// const vueLoaderConfig = require('./vue-loader.conf');
+const merge = require('webpack-merge');
+const styleLoader = require('./style-loader');
+// const baseConf = require('../config').base;
+const baseConfig = require('./webpack.base.conf');
+const nodeExternals = require('webpack-node-externals');
+const VueSSRServerPlugin = require('vue-server-renderer/server-plugin');
+const isProd = process.env.NODE_ENV === 'production';
+// const assetsPath = dir => path.posix.join(baseConf.assetsPath, dir);
+
+module.exports = merge(baseConfig, {
+  mode: isProd ? 'production' : 'development',
+
+  // 这允许 webpack 以 Node 适用方式(Node-appropriate fashion)处理动态导入(dynamic import)，
+  // 并且还会在编译 Vue 组件时，
+  // 告知 `vue-loader` 输送面向服务器代码(server-oriented code)。
+  target: 'node',
+  devtool: '#source-map',
+  entry: path.resolve(__dirname, '../src/entry-server.js'),
+
+  module: {
+    rules: styleLoader.styleLoader({
+      extract: !isProd,
+      sourceMap: !isProd
+    })
+  },
+
+  // 此处告知 server bundle 使用 Node 风格导出模块(Node-style exports)
+  output: {
+    filename: 'server-bundle.js',
+    libraryTarget: 'commonjs2'
+  },
+  // https://webpack.js.org/configuration/externals/#externals
+  // https://github.com/liady/webpack-node-externals
+  // 外置化应用程序依赖模块。可以使服务器构建速度更快，
+  // 并生成较小的 bundle 文件。
+  externals: nodeExternals({
+    // do not externalize CSS files in case we need to import it from a dep
+    // 不要外置化 webpack 需要处理的依赖模块。
+    // 你可以在这里添加更多的文件类型。例如，未处理 *.vue 原始文件，
+    // 你还应该将修改 `global`（例如 polyfill）的依赖模块列入白名单
+    whitelist: /\.css$/
+  }),
+  plugins: [
+    new webpack.DefinePlugin({
+      'process.env.NODE_ENV': JSON.stringify(
+        process.env.NODE_ENV || 'development'
+      ),
+      'process.env.VUE_ENV': '"server"'
+    }),
+
+    // 这是将服务器的整个输出
+    // 构建为单个 JSON 文件的插件。
+    // 默认文件名为 `vue-ssr-server-bundle.json
+    new VueSSRServerPlugin()
+  ]
+});
+
+```

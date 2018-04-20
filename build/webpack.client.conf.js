@@ -1,4 +1,4 @@
-const webpack = require('webpack');
+// const webpack = require('webpack');
 const path = require('path');
 const merge = require('webpack-merge');
 const VueSSRClientPlugin = require('vue-server-renderer/client-plugin');

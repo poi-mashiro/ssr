@@ -52,9 +52,6 @@ exports.cssLoader = function(options) {
       //   use: loaders,
       //   fallback: 'vue-style-loader'
       // });
-      // 根据
-
-      // 的结果，配置 mini css extract plugin
       // console.log([MiniCssExtractPlugin.loader].concat(loaders));
       return [MiniCssExtractPlugin.loader].concat(loaders);
     } else {
