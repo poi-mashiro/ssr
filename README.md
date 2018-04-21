@@ -190,6 +190,7 @@ eslint 配置省略，个人喜欢就行
 #### 2 基础实现
 
 省略一些步骤，详细的可以看 [官方教程](https://ssr.vuejs.org/zh/)  
+和 SPA 的区别就在于 vue-cli init webpack 后的 main.js 最后 new Vue() 变成 export 函数来重复进行 new Vue() 来保证 用户访问的数据不会弄混  
 ajax.js
 ```
 import axios from 'axios';
