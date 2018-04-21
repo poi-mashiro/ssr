@@ -13,7 +13,26 @@
 #### 前言
 
 首先，明白自己是否真的需要 ssr ，需要自己从头搭环境，请阅读 [官方教程](https://ssr.vuejs.org/zh/)  
-其次，如果必须要 ssr ，建议使用 [nuxt.js](https://zh.nuxtjs.org/)，如果想要直接控制整个流程，那么 nuxt.js 就不合适了  
+根据实际情况，可以使用以下方式，不使用构建环境
+```
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>xxxxxx</title>
+  <script src="vue.js"></script>
+</head>
+
+<body>
+  <!--页面内容 省略，写完静态页面之后，交给后端使用 例如 我之前的 php 他使用 smarty 模板 插入数据 -->
+  <script src="xxx.js"></script>
+</body>
+
+</html>
+```
+其次，如果必须要 ssr ，建议使用 [nuxt.js](https://zh.nuxtjs.org/)，如果想要自己控制整个流程，那么 nuxt.js 就不合适了  
 再次，可以在 官方 的 [demo](https://github.com/vuejs/vue-hackernews-2.0/) 的基础上进行修改来开发页面部分，虽然不知道为什么我 npm run build npm start 之后，出不来页面，可能是获取数据的问题导致的
 
 <span id = "1"></span>
@@ -1503,5 +1522,31 @@ module.exports = merge(baseConfig, {
     new VueSSRServerPlugin()
   ]
 });
+
+```
+config/index.js
+```
+const path = require('path')
+module.exports = {
+  base: {
+    path: path.resolve(__dirname, '../dist'),
+    publicPath: '/dist/',
+    assetsPath: 'static'
+  },
+  dev: {
+    env: 'development',
+    publicPath: '/dist/',
+    assetsPath: 'static',
+    assetsSubDirectory: 'static',
+    devtoolType: 'cheap-module-eval-source-map'
+  },
+  build: {
+    env: 'production',
+    publicPath: '/dist/',
+    assetsPath: 'static',
+    assetsSubDirectory: 'static',
+    devtoolType: 'source-map'
+  }
+};
 
 ```
