@@ -179,7 +179,7 @@ eslint 配置省略，个人喜欢就行
       A.vue
       B.vue
       C.vue
-    app.js              相遇当 vue-cli init webpack 后的 main.js
+    app.js              相遇当 vue init webpack 后的 main.js
     App.vue             入口组件
     entry-client.js     前端编译入口
     entry-server.js     ssr 编译入口
@@ -190,7 +190,7 @@ eslint 配置省略，个人喜欢就行
 #### 2 基础实现
 
 省略一些步骤，详细的可以看 [官方教程](https://ssr.vuejs.org/zh/)  
-和 SPA 的区别就在于 vue-cli init webpack 后的 main.js 最后 new Vue() 变成 export 函数来重复进行 new Vue() 来保证 用户访问的数据不会弄混  
+和 SPA 的区别就在于 vue init webpack 后的 main.js 最后 new Vue() 变成 export 函数来重复进行 new Vue() 来保证 用户访问的数据不会弄混  
 ajax.js
 ```
 import axios from 'axios';
@@ -501,7 +501,7 @@ index.html  静态内容 vue-ssr-outlet 是 ssr 内容的注入位置 head 内�
 简单配置webpack.server.conf.js
 ```
 const path = require('path');
-const vueLoaderConfig = require('./vue-loader.conf');  // vueLoaderConfig 可以使用 vue-cli init template 中的 vue-loader.conf.js 和 utils.js 中提取出功能, webpack 4 要安装 extract-text-webpack-plugin@next
+const vueLoaderConfig = require('./vue-loader.conf');  // vueLoaderConfig 可以使用 vue init template 中的 vue-loader.conf.js 和 utils.js 中提取出功能, webpack 4 要安装 extract-text-webpack-plugin@next
 
 const ExtractTextPlugin = require('extract-text-webpack-plugin');  // 取决于 vueLoaderConfig 相关功能中使用哪个抽离css
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');  //  取决于 vueLoaderConfig 相关功能中使用哪个抽离css
@@ -1007,7 +1007,7 @@ npm run dev   使用 nodemon 自动重启服务器, 注意热更新不支持 nod
 <span id = "4"></span>
 
 #### 4 其他 和 注意点
-个人感觉 最大的麻烦是 配置 dev server, 因为平常都是使用的 webpack-dev-server，然后改写 ssr 功能, 基础实现 官方文档比较全面，基本复制粘贴就能跑起来, 加上参考修改vue-cli init webpack 里的 webpack 配置  
+个人感觉 最大的麻烦是 配置 dev server, 因为平常都是使用的 webpack-dev-server，然后改写 ssr 功能, 基础实现 官方文档比较全面，基本复制粘贴就能跑起来, 加上参考修改vue init webpack 里的 webpack 配置  
 请确保静态资源路径没有 index.html 或 打包后的静态资源没有直接指向静态资源路径的'/'，否则服务器会返回 打包后的 index.html 而不走 ssr  
 
 css 压缩 个人参照 webpack 4 的推荐 使用了 mini css extract plugin 替代 extract-text-webpack-plugin  
