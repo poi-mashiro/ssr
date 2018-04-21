@@ -179,7 +179,7 @@ eslint 配置省略，个人喜欢就行
       A.vue
       B.vue
       C.vue
-    app.js              相遇当 vue init webpack 后的 main.js
+    app.js              相当于 vue init webpack 后的 main.js
     App.vue             入口组件
     entry-client.js     前端编译入口
     entry-server.js     ssr 编译入口
