@@ -10,7 +10,7 @@ const merge = require('webpack-merge');
 // 一个创建html入口文件的webpack插件！
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 // 一个拷贝文件的webpack插件！
-// const CopyWebpackPlugin = require('copy-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 // 资源路径
@@ -61,33 +61,6 @@ const prod = merge({}, baseConf, {
         }
       }
     }
-    /*
-
-        optimization: {
-            splitChunks: {
-              chunks: "initial",         // 必须三选一： "initial" | "all"(默认就是all) | "async"
-              minSize: 0,                // 最小尺寸，默认0
-              minChunks: 1,              // 最小 chunk ，默认1
-              maxAsyncRequests: 1,       // 最大异步请求数， 默认1
-              maxInitialRequests: 1,    // 最大初始化请求书，默认1
-              name: () => {},              // 名称，此选项课接收 function
-              cacheGroups: {                 // 这里开始设置缓存的 chunks
-                priority: "0",                // 缓存组优先级 false | object |
-                vendor: {                   // key 为entry中定义的 入口名称
-                  chunks: "initial",        // 必须三选一： "initial" | "all" | "async"(默认就是异步)
-                  test: /react|lodash/,     // 正则规则验证，如果符合就提取 chunk
-                  name: "vendor",           // 要缓存的 分隔出来的 chunk 名称
-                  minSize: 0,
-                  minChunks: 1,
-                  enforce: true,
-                  maxAsyncRequests: 1,       // 最大异步请求数， 默认1
-                  maxInitialRequests: 1,    // 最大初始化请求书，默认1
-                  reuseExistingChunk: true   // 可设置是否重用该chunk（查看源码没有发现默认值）
-                }
-              }
-            }
-          },
-         */
   },
   plugins: [
     // 压缩js
@@ -112,13 +85,13 @@ const prod = merge({}, baseConf, {
     new webpack.HashedModuleIdsPlugin(),
 
     // 将整个文件复制到构建输出指定目录下
-    // new CopyWebpackPlugin([
-    //   {
-    //     from: path.resolve(__dirname, '../static'),
-    //     to: prodConf.assetsPath,
-    //     ignore: ['.*']
-    //   }
-    // ]),
+    new CopyWebpackPlugin([
+      {
+        from: path.resolve(__dirname, '../static'),
+        to: prodConf.assetsPath,
+        ignore: ['.*']
+      }
+    ]),
 
     // html配置
     new HtmlWebpackPlugin({

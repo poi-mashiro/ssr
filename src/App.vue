@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <p>app.vue</p>
+    <p>aaaa</p>
     <router-link tag="span" :to="{ path: '/a' }">a</router-link>
     <router-link tag="span" :to="{ path: '/b' }">b</router-link>
     <router-link tag="span" :to="{ path: '/c' }">c</router-link>

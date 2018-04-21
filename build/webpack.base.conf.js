@@ -1,12 +1,11 @@
 const path = require('path');
-// const webpack = require('webpack');
 const baseConfig = require('../config').base;
 const vueLoaderConfig = require('./vue-loader.conf.js');
 // const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const isProd = process.env.NODE_ENV === 'production';
 const resolve = dir => path.join(__dirname, '..', dir);
 const assetsPath = dir => path.posix.join(baseConfig.assetsPath, dir);
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = {
   mode: isProd ? 'production' : 'development',
@@ -19,7 +18,6 @@ module.exports = {
   // 配置模块如何被解析
   resolve: {
     // 自动解析文件扩展名(补全文件后缀)(从左->右)
-    // import hello from './hello'  （!hello.js? -> !hello.vue? -> !hello.json）
     extensions: ['.js', '.vue', '.json'],
 
     // 配置别名映射
@@ -43,7 +41,6 @@ module.exports = {
       {
         test: /\.vue$/,
         loader: 'vue-loader',
-        // include: resolve('src'),
         options: vueLoaderConfig
       },
       {
@@ -79,8 +76,8 @@ module.exports = {
     // })
     new MiniCssExtractPlugin({
       // Options similar to the same options in webpackOptions.output// both options are optional
-      filename: 'css/[name].[hash].css',
-      chunkFilename: 'css/[id].[chunkhash].css'
+      filename: '/static/css/[name].[hash].css',
+      chunkFilename: '/static/css/[id].[chunkhash].css'
     })
   ]
 };

@@ -26,11 +26,12 @@ module.exports = function setupDevServer(app, cb) {
   };
   // template = fs.readFileSync('src/index.html', 'utf-8');
   // client
+  clientConfig.entry.app = ['webpack-hot-middleware/client', clientConfig.entry.app]
   clientConfig.output.filename = '[name].js'; // 热更新不能跟 [chunkhash] 同用
   const clientCompiler = webpack(clientConfig);
   const devMiddleware = webpackDevMiddleware(clientCompiler, {
     //  绑定中间件的公共路径,使用与webpack相同
-    publicPath: clientConfig.output.publicPath,
+    publicPath: '/dist/',
     stats: {
       //  用于形成统计信息的选项
       colors: true,

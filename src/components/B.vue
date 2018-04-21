@@ -1,6 +1,6 @@
 <template>
   <div>
-    <p @click="testapi">123</p>
+    <p @click="testapi">点击post请求</p>
     <p>{{ aaa }}</p>
   </div>
 </template>

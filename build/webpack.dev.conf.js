@@ -4,14 +4,9 @@ const webpack = require('webpack');
 const styleLoader = require('./style-loader');
 const devConf = require('../config').dev; // 开发环境配置参数
 const baseConf = require('./webpack.base.conf'); // webpack基本配置
-
-// 一个webpack配置合并模块,可简单的理解为与Object.assign()功能类似！
 const merge = require('webpack-merge');
-// 一个创建html入口文件的webpack插件！
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-// 一个编译提示的webpack插件！
 const FriendlyErrorsPlugin = require('friendly-errors-webpack-plugin');
-// 发送系统通知的一个node模块！
 const notifier = require('node-notifier');
 
 const dev = merge(baseConf, {

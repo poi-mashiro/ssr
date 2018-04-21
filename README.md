@@ -14,7 +14,7 @@
 
 首先，明白自己是否真的需要 ssr ，需要自己从头搭环境，请阅读 [官方教程](https://ssr.vuejs.org/zh/)  
 根据实际情况，可以使用以下方式，不使用构建环境
-```
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -33,97 +33,23 @@
 </html>
 ```
 其次，如果必须要 ssr ，建议使用 [nuxt.js](https://zh.nuxtjs.org/)，如果想要自己控制整个流程，那么 nuxt.js 就不合适了  
-再次，可以在 官方 的 [demo](https://github.com/vuejs/vue-hackernews-2.0/) 的基础上进行修改来开发页面部分，虽然不知道为什么我 npm run build npm start 之后，出不来页面，可能是获取数据的问题导致的
+再次，可以在 官方 的 [demo](https://github.com/vuejs/vue-hackernews-2.0/) 的基础上进行修改来开发页面部分  
+虽然不知道为什么我 npm run build 然后 npm start 之后，出不来页面，可能是获取数据的问题导致的
 
 <span id = "1"></span>
 
 #### 1 环境配置
 
-在能使用 async/await import/export 的情况下，不使用，和咸鱼有什么区别，因此 package.json
+在能使用 async/await import/export 的情况下，不使用，和咸鱼有什么区别  
 
-```
-  "scripts": {
-    "start": "cross-env NODE_ENV=production node server/index.js",
-    "prod": "npm run build && npm run start",
-    "dev": "nodemon server/index.js",  // 使用 nodemon 自动重启服务器, 注意热更新不支持 nodemon
-    "build": "rimraf dist && npm run build:client && npm run build:server",  // 移除 dist 目录，再编译
-    "build:client": "cross-env NODE_ENV=production webpack --config build/webpack.client.conf.js --colors --progress",
-    "build:server": "cross-env NODE_ENV=production webpack --config build/webpack.server.conf.js --colors --progress",
-    "analyz": "cross-env analyz_config_report=true npm run build:client"
-  },
-  "dependencies": {
-    "axios": "^0.18.0",
-    "koa": "^2.5.0",
-    "koa-bodyparser": "^4.2.0",
-    "koa-compress": "^2.0.0",
-    "koa-router": "^7.4.0",
-    "koa-static": "^4.0.2",
-    "lru-cache": "^4.1.2",
-    "vue": "^2.5.16",
-    "vue-router": "^3.0.1",
-    "vue-server-renderer": "^2.5.16",
-    "vuex": "^3.0.1",
-    "vuex-router-sync": "^5.0.0"
-  },
-  "devDependencies": {
-    "autoprefixer": "^8.3.0",
-    "babel-core": "^6.26.0",
-    "babel-eslint": "^8.2.3",
-    "babel-helper-vue-jsx-merge-props": "^2.0.3",
-    "babel-loader": "^7.1.4",
-    "babel-plugin-dynamic-import-node": "^1.2.0",
-    "babel-plugin-syntax-dynamic-import": "^6.18.0",
-    "babel-plugin-syntax-jsx": "^6.18.0",
-    "babel-plugin-transform-runtime": "^6.23.0",
-    "babel-plugin-transform-vue-jsx": "^3.7.0",
-    "babel-preset-env": "^1.6.1",
-    "babel-register": "^6.26.0",
-    "cross-env": "^5.1.4",
-    "css-loader": "^0.28.11",
-    "eslint": "^4.19.1",
-    "eslint-config-standard": "^11.0.0",
-    "eslint-friendly-formatter": "^4.0.1",
-    "eslint-loader": "^2.0.0",
-    "eslint-plugin-import": "^2.11.0",
-    "eslint-plugin-node": "^6.0.1",
-    "eslint-plugin-promise": "^3.7.0",
-    "eslint-plugin-standard": "^3.0.1",
-    "eslint-plugin-vue": "^4.4.0",
-    "extract-text-webpack-plugin": "^4.0.0-beta.0",
-    "file-loader": "^1.1.11",
-    "friendly-errors-webpack-plugin": "^1.7.0",
-    "html-webpack-plugin": "^3.2.0",
-    "mini-css-extract-plugin": "^0.4.0",
-    "node-notifier": "^5.2.1",
-    "nodemon": "^1.17.3",
-    "optimize-css-assets-webpack-plugin": "^4.0.0",
-    "rimraf": "^2.6.2",
-    "stylus": "^0.54.5",
-    "stylus-loader": "^3.0.2",
-    "url-loader": "^1.0.1",
-    "vue-loader": "^14.2.2",
-    "vue-style-loader": "^4.1.0",
-    "vue-template-compiler": "^2.5.16",
-    "webpack": "^4.6.0",
-    "webpack-bundle-analyzer": "^2.11.1",
-    "webpack-cli": "^2.0.14",
-    "webpack-dev-middleware": "^3.1.2",
-    "webpack-hot-middleware": "^2.22.1",
-    "webpack-merge": "^4.1.2",
-    "webpack-node-externals": "^1.7.2"
-  }
-```
-
-让 node 支持使用 import/export ，配置 .babelrc
-
-```
+让 node 支持使用 import/export ，配置 .babelrc  
+json格式，复制后请删除注释
+```json
 {
   "presets": [
-    "es2015",  // 缺省此项，会导致不转译 import
     [
       "env",
       {
-        "modules": false,
         "targets": {
           "browsers": ["> 1%", "last 2 versions", "not ie <= 10"]
         }
@@ -144,7 +70,6 @@
   }
 }
 ```
-
 eslint 配置省略，个人喜欢就行  
 目录结构
 
@@ -190,33 +115,12 @@ eslint 配置省略，个人喜欢就行
 #### 2 基础实现
 
 省略一些步骤，详细的可以看 [官方教程](https://ssr.vuejs.org/zh/)  
-和 SPA 的区别就在于 vue init webpack 后的 main.js 最后 new Vue() 变成 export 函数来重复进行 new Vue() 来保证 用户访问的数据不会弄混  
-ajax.js
-```
-import axios from 'axios';
+和 SPA 的区别就在于 vue init webpack 后的 main.js 最后 new Vue()  
+变成 export 函数来重复进行 new Vue() 来保证 用户访问会话的数据相互独立  
+本目录中 src/app.js 相当于 main.js
 
-let baseurl = 'http://localhost:3000';
-
-export const ajax = (method, url, param) =>
-  axios({
-    method: method,
-    url: baseurl + url,
-    data: param,
-    responsetype: 'json'
-  });
-```
-
-api.js
-
-```
-import { ajax } from './ajax';
-
-export const fetchItem = id => ajax('get', '/api', { aaa: 123 });  // 测试 store 预取数据
-
-export const test = () => ajax('post', '/api', { aaa: 123 });  // 测试 页面混合后 的数据请求
-```
-A.vue                     ssr 时请慎用 table 等标签，请参考[官方教程](https://ssr.vuejs.org/zh/hydration.html)
-```
+A.vue                     ssr 时请慎用 table 等标签，请参考 [一些需要注意的坑](https://ssr.vuejs.org/zh/hydration.html)  
+```html
 <template>
  <div>{{ item }}</div>
 </template>
@@ -237,50 +141,8 @@ export default {
 };
 </script>
 ```
-B.vue
-```
-<template>
- <div>
-   <p @click="testapi">点击post请求</p>
-   <p>{{ aaa }}</p>
- </div>
-</template>
-
-<script>
-import {test} from '../api/api';
-
-export default {
- name: 'B',
- data() {
-   return {
-     aaa: ''
-   };
- },
- methods: {
-   testapi() {
-     test().then(res => {
-       console.log(res);
-       this.aaa = res.data;
-     });
-   }
- }
-};
-</script>
-```
-C.vue
-```
-<template>
- <div>ccccc</div>
-</template>
-
-<script>
-export default {
- name: 'C'
-};
-</script>
-```
 App.vue
-```
+```html
 <template>
   <div id="app">
     <p>app.vue</p>
@@ -298,7 +160,7 @@ export default {
 </script>
 ```
 router/index.js     ssr 异步组件 需要 vue 2.5+
-```
+```js
 import Vue from 'vue';
 import Router from 'vue-router';
 
@@ -317,7 +179,7 @@ export function createRouter() {
 }
 ```
 store/index.js      代码拆分，请参考[官方教程](https://ssr.vuejs.org/zh/data.html)
-```
+```js
 import Vue from 'vue';
 import Vuex from 'vuex';
 // 假定我们有一个可以返回 Promise 的
@@ -336,10 +198,6 @@ export function createStore() {
         // `store.dispatch()` 会返回 Promise，
         // 以便我们能够知道数据在何时更新
         return fetchItem(id).then(item => {
-          console.log(item.data);
-          console.log('');
-          console.log('');
-          console.log('');
           commit('setItem', { id, item: item.data });
         });
       }
@@ -353,7 +211,7 @@ export function createStore() {
 }
 ```
 app.js
-```
+```js
 import Vue from 'vue';
 import App from './App.vue';
 import { createRouter } from './router';
@@ -376,11 +234,13 @@ export function createApp () {
   return { app, router, store };
 }
 ```
-entry-client.js 接管 ssr 的html, 客户端数据预取  请参考[官方教程](https://ssr.vuejs.org/zh/data.html)
-```
+entry-client.js 接管 ssr 的html, 客户端数据预取  请参考[客户端数据预取](https://ssr.vuejs.org/zh/data.html)  
+这里使用的是 在路由导航之前解析数据
+```js
 import Vue from 'vue';
 import { createApp } from './app';
 const { app, router, store } = createApp();
+// 在客户端，在挂载到应用程序之前，store 就应该获取到状态：
 if (window.__INITIAL_STATE__) {
   store.replaceState(window.__INITIAL_STATE__);
 }
@@ -431,7 +291,7 @@ router.onReady(() => {
 })
 ```
 entry-server.js 生成html 结构
-```
+```js
 import { createApp } from './app';
 
 const isDev = process.env.NODE_ENV !== 'production';
@@ -479,32 +339,26 @@ export default context => {
   });
 };
 ```
-index.html  静态内容 vue-ssr-outlet 是 ssr 内容的注入位置 head 内容管理,请参考[官方教程](https://ssr.vuejs.org/zh/head.html)
-```
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>xxxx</title>
-</head>
-
+index.html  注释 vue-ssr-outlet 是 ssr 识别内容注入的位置 head 内容管理,请参考[head 管理](https://ssr.vuejs.org/zh/head.html)
+```html
 <body>
   <!--vue-ssr-outlet-->
+  <!-- 以及其他内容 -->
 </body>
-
-</html>
 ```
 ##### 查看效果
-简单配置webpack.server.conf.js
-```
+简单配置 webpack.server.conf.js
+```js
 const path = require('path');
-const vueLoaderConfig = require('./vue-loader.conf');  // vueLoaderConfig 可以使用 vue init template 中的 vue-loader.conf.js 和 utils.js 中提取出功能, webpack 4 要安装 extract-text-webpack-plugin@next
+const vueLoaderConfig = require('./vue-loader.conf');
+// vueLoaderConfig 可以使用 vue init template 中的 
+// vue-loader.conf.js 和 utils.js 中提取出功能, 
+// webpack 4 要安装 extract-text-webpack-plugin@next
 
-const ExtractTextPlugin = require('extract-text-webpack-plugin');  // 取决于 vueLoaderConfig 相关功能中使用哪个抽离css
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');  //  取决于 vueLoaderConfig 相关功能中使用哪个抽离css
+const ExtractTextPlugin = require('extract-text-webpack-plugin');  
+// 取决于 vueLoaderConfig 相关功能中使用哪个抽离css
+const MiniCssExtractPlugin = require('mini-css-extract-plugin'); 
+// 取决于 vueLoaderConfig 相关功能中使用哪个抽离css
 
 function resolve (dir) {
   return path.join(__dirname, '..', dir);
@@ -561,36 +415,29 @@ module.exports = {
 ```
 使用 npm run build:server 得到 serverapp.js  
 编写 server/app.js
-```
+```js
 import Koa from 'koa';
 import fs from 'fs';
 import path from 'path';
 import bodyParser from 'koa-bodyparser';
 import KoaRouter from 'koa-router';
 
-import { createRenderer, createBundleRenderer } from 'vue-server-renderer';
+import { createRenderer } from 'vue-server-renderer';
 import createApp from '../dist/serverapp';
 
 const template = fs.readFileSync('src/index.html', 'utf-8');
 const renderer = createRenderer();
-// console.log(renderer)
 
 const app = new Koa();
 
 // 使用post处理中间件
 app.use(bodyParser());
 
-
 // 实现一个简单 api 路由
 const router = new KoaRouter();
 
 router
   .get('/api', async (ctx, next) => {
-    console.log(ctx);
-    console.log('');
-    console.log('');
-    console.log('');
-    console.log('');
     ctx.body = JSON.stringify({ id: '123', text: 'aaaa' });
   })
   .post('/api', async (ctx, next) => {
@@ -628,7 +475,7 @@ app.listen(3000, () => {
 });
 ```
 server/index.js 为了使用 import 作为过渡入口
-```
+```js
 require('babel-register');
 require('./app.js');
 ```
@@ -637,9 +484,10 @@ bash 中 node server/index.js 访问 localhost:3000 查看效果，这时的页�
 ##### vue 接管页面
 参考[官方教程：bundle render](https://ssr.vuejs.org/zh/bundle-renderer.html)  [官方教程：构建配置](https://ssr.vuejs.org/zh/build-config.html)  
 修改 webpack 的配置
+npm run build:client && npm run build:server
 使用 createBundleRenderer 渲染页面  
 修改server/app.js
-```
+```js
 import Koa from 'koa';
 import fs from 'fs';
 import path from 'path';
@@ -647,17 +495,15 @@ import bodyParser from 'koa-bodyparser';
 import staticFlies from 'koa-static';
 import KoaRouter from 'koa-router';
 
-import { createRenderer, createBundleRenderer } from 'vue-server-renderer';
+import { createBundleRenderer } from 'vue-server-renderer';
 import serverBundle from '../dist/vue-ssr-server-bundle.json';
 import clientManifest from '../dist/vue-ssr-client-manifest.json';
 
 const template = fs.readFileSync('src/index.html', 'utf-8');
-// const renderer = createRenderer();
 const renderer = createBundleRenderer(serverBundle, {
   template,
   clientManifest
 });
-// console.log(renderer)
 
 const app = new Koa();
 
@@ -671,11 +517,6 @@ const router = new KoaRouter();
 
 router
   .get('/api', async (ctx, next) => {
-    console.log(ctx);
-    console.log('');
-    console.log('');
-    console.log('');
-    console.log('');
     ctx.body = JSON.stringify({ id: '123', text: 'aaaa' });
   })
   .post('/api', async (ctx, next) => {
@@ -710,15 +551,18 @@ app.listen(3000, () => {
   console.log('starting at port 3000');
 });
 ```
-使用npm run build 编译
+node server/index.js 查看页面
 如果你愿意每次修改都 中断服务器，并且 npm run build 再重启服务器的话，到这就已经足够了
 
 <span id = "3"></span>
 
 #### 3 开发配置
-配置 webpack 以及 实现 dev server  可以参考官方 demo
+配置 webpack 以及 使用中间件实现 dev server  可以参考官方 demo
+
+像官方 demo 那样使用中间件 会报 next is undefined 的错误
+
 build/dev.js
-```
+```js
 const devMiddleware = require('webpack-dev-middleware');
 module.exports = (compiler, opts) => {
   const middleware = devMiddleware(compiler, opts);
@@ -745,7 +589,7 @@ module.exports = (compiler, opts) => {
 };
 ```
 build/hot.js
-```
+```js
 const hotMiddleware = require('webpack-hot-middleware');
 const PassThrough = require('stream').PassThrough;
 
@@ -769,7 +613,7 @@ module.exports = (compiler, opts) => {
 };
 ```
 setup-dev-server.js  参考了官方 demo
-```
+```js
 const fs = require('fs');
 const path = require('path');
 const MFS = require('memory-fs');
@@ -784,20 +628,18 @@ const readFile = (fs, file) =>
 
 module.exports = function setupDevServer(app, cb) {
   let bundle;
-  // let ready;
-  // let template;
+
   let clientManifest;
 
-  // const readyPromise = new Promise(resolve => {
-  //   ready = resolve;
-  // });
   const update = () => {
     if (bundle && clientManifest) {
       cb(bundle, clientManifest);
     }
   };
-  // template = fs.readFileSync('src/index.html', 'utf-8');
+
   // client
+  // 修改为热更新入口
+  clientConfig.entry.app = ['webpack-hot-middleware/client', clientConfig.entry.app]
   clientConfig.output.filename = '[name].js'; // 热更新不能跟 [chunkhash] 同用
   const clientCompiler = webpack(clientConfig);
   const devMiddleware = webpackDevMiddleware(clientCompiler, {
@@ -819,11 +661,7 @@ module.exports = function setupDevServer(app, cb) {
     if (stats.errors.length) return;
 
     console.log('client-dev...');
-    // let filePath = path.join(clientConfig.output.path, 'index.html');
-    // if (fs.existsSync(filePath)) {
-    //   // 读取内存模板
-    //   template = readFile(fs, 'index.html');
-    // }
+
     clientManifest = JSON.parse(
       readFile(devMiddleware.fileSystem, 'vue-ssr-client-manifest.json')
     );
@@ -849,7 +687,7 @@ module.exports = function setupDevServer(app, cb) {
 };
 ```
 拆分 ssr 功能 独立出 server/ssr.js
-```
+```js
 import path from 'path';
 import fs from 'fs';
 import LRU from 'lru-cache';
@@ -911,7 +749,7 @@ export const ssr = async app => {
 
   router.get('*', async (ctx, next) => {
     // 提示webpack还在工作
-    console.log(ctx.url, renderer, '222222222222222222222222');
+    console.log(ctx.url, renderer);
     if (!renderer) {
       ctx.type = 'html';
       return (ctx.body = 'waiting for compilation... refresh in a moment.');
@@ -944,7 +782,7 @@ export const ssr = async app => {
 };
 ```
 修改 server/app.js
-```
+```js
 'use strict';
 import Koa from 'koa';
 import path from 'path';
@@ -971,16 +809,10 @@ app.use(bodyParser());
 // 设置静态资源路径
 app.use(staticFlies(path.resolve(__dirname, '../')));
 
-
 const router = new KoaRouter();
 
 router
   .get('/api', async (ctx, next) => {
-    console.log(ctx);
-    console.log('');
-    console.log('');
-    console.log('');
-    console.log('');
     ctx.body = JSON.stringify({ id: '123', text: 'aaaa' });
   })
   .post('/api', async (ctx, next) => {
@@ -1000,19 +832,29 @@ const init = async () => {
 };
 init();
 ```
-npm run dev   使用 nodemon 自动重启服务器, 注意热更新不支持 nodemon
+npm run dev   使用 nodemon 自动重启服务器  
+注意热更新不支持 nodemon  
 使用热更新开发时，请使用 node server/index.js
-或 npm run build 然后 npm start
+
+生产环境 npm run build 然后 npm start
 
 <span id = "4"></span>
 
 #### 4 其他 和 注意点
-个人感觉 最大的麻烦是 配置 dev server, 因为平常都是使用的 webpack-dev-server，然后改写 ssr 功能, 基础实现 官方文档比较全面，基本复制粘贴就能跑起来, 加上参考修改vue init webpack 里的 webpack 配置  
-请确保静态资源路径没有 index.html 或 打包后的静态资源没有直接指向静态资源路径的'/'，否则服务器会返回 打包后的 index.html 而不走 ssr  
+个人感觉 最大的麻烦是 配置 dev server, 因为平常都是使用的 webpack-dev-server  
+然后改写 ssr 功能, 基础实现 官方文档比较全面  
+基本复制粘贴就能跑起来, 加上参考修改 vue init webpack 里的 webpack 配置  
+  
+
+请确保静态资源路径没有 index.html 或 打包后的静态资源没有直接指向静态资源路径的'/'  
+否则服务器会返回 打包后的 index.html 而不走 ssr  
 
 css 压缩 个人参照 webpack 4 的推荐 使用了 mini css extract plugin 替代 extract-text-webpack-plugin  
-参考了 console.log 的结果， 修改了 build/style-loader.js 以及 webpack.base.conf.js , mini css 不能像 ETWP 那样从 vue-style-loader 接收代码，会报错，而 ETMP 是提取 vue-style-loader 处理过的css  
+参考了 console.log 的结果， 修改了 build/style-loader.js 以及 webpack.base.conf.js  
+mini css 不能像 ETWP@4.0.0-beta 那样从 vue-style-loader 接收代码，会报错  
+而 ETMP 是提取 vue-style-loader 处理过的css  
 webpack.prod.conf.js 中使用 optimize-css-assets-webpack-plugin 压缩css  
+因为 mini css 只提供抽离 css 功能
 
 服务端的其他功能开发，请参考 koa 文档及他人教程
 
@@ -1020,10 +862,8 @@ webpack.prod.conf.js 中使用 optimize-css-assets-webpack-plugin 压缩css
 
 #### 5 附配置
 style-loader.js
-```
+```js
 'use strict';
-// const path = require('path');
-// 一个抽离出css的webpack插件！
 // const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
@@ -1112,7 +952,7 @@ exports.styleLoader = function(options) {
 
 ```
 vue-loader.js
-```
+```js
 'use strict';
 const styleLoader = require('./style-loader');
 const isProd = process.env.NODE_ENV === 'production';
@@ -1132,16 +972,15 @@ module.exports = {
 
 ```
 webpack.base.conf.js
-```
+```js
 const path = require('path');
-// const webpack = require('webpack');
 const baseConfig = require('../config').base;
 const vueLoaderConfig = require('./vue-loader.conf.js');
 // const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const isProd = process.env.NODE_ENV === 'production';
 const resolve = dir => path.join(__dirname, '..', dir);
 const assetsPath = dir => path.posix.join(baseConfig.assetsPath, dir);
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = {
   mode: isProd ? 'production' : 'development',
@@ -1154,7 +993,6 @@ module.exports = {
   // 配置模块如何被解析
   resolve: {
     // 自动解析文件扩展名(补全文件后缀)(从左->右)
-    // import hello from './hello'  （!hello.js? -> !hello.vue? -> !hello.json）
     extensions: ['.js', '.vue', '.json'],
 
     // 配置别名映射
@@ -1178,7 +1016,6 @@ module.exports = {
       {
         test: /\.vue$/,
         loader: 'vue-loader',
-        // include: resolve('src'),
         options: vueLoaderConfig
       },
       {
@@ -1214,16 +1051,15 @@ module.exports = {
     // })
     new MiniCssExtractPlugin({
       // Options similar to the same options in webpackOptions.output// both options are optional
-      filename: 'css/[name].[hash].css',
-      chunkFilename: 'css/[id].[chunkhash].css'
+      filename: '/static/css/[name].[hash].css',
+      chunkFilename: '/static/css/[id].[chunkhash].css'
     })
   ]
 };
 
 ```
 webpack.client.conf.js
-```
-// const webpack = require('webpack');
+```js
 const path = require('path');
 const merge = require('webpack-merge');
 const VueSSRClientPlugin = require('vue-server-renderer/client-plugin');
@@ -1242,21 +1078,16 @@ module.exports = merge(config, {
 
 ```
 webpack.dev.conf.js
-```
+```js
 'use strict';
 const path = require('path');
 const webpack = require('webpack');
 const styleLoader = require('./style-loader');
 const devConf = require('../config').dev; // 开发环境配置参数
 const baseConf = require('./webpack.base.conf'); // webpack基本配置
-
-// 一个webpack配置合并模块,可简单的理解为与Object.assign()功能类似！
 const merge = require('webpack-merge');
-// 一个创建html入口文件的webpack插件！
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-// 一个编译提示的webpack插件！
 const FriendlyErrorsPlugin = require('friendly-errors-webpack-plugin');
-// 发送系统通知的一个node模块！
 const notifier = require('node-notifier');
 
 const dev = merge(baseConf, {
@@ -1310,23 +1141,19 @@ module.exports = dev;
 
 ```
 webpack.prod.conf.js
-```
+```js
 'use strict';
 const path = require('path');
 const webpack = require('webpack');
 const styleLoader = require('./style-loader');
 const prodConf = require('../config').build; // 生产环境配置参数
 const baseConf = require('./webpack.base.conf'); // webpack基本配置
-
-// 一个webpack配置合并模块,可简单的理解为与Object.assign()功能类似！
 const merge = require('webpack-merge');
-// 一个创建html入口文件的webpack插件！
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 // 一个拷贝文件的webpack插件！
-// const CopyWebpackPlugin = require('copy-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
-// 资源路径
 const assetsPath = dir => path.posix.join(prodConf.assetsPath, dir);
 
 const prod = merge({}, baseConf, {
@@ -1374,33 +1201,6 @@ const prod = merge({}, baseConf, {
         }
       }
     }
-    /*
-
-        optimization: {
-            splitChunks: {
-              chunks: "initial",         // 必须三选一： "initial" | "all"(默认就是all) | "async"
-              minSize: 0,                // 最小尺寸，默认0
-              minChunks: 1,              // 最小 chunk ，默认1
-              maxAsyncRequests: 1,       // 最大异步请求数， 默认1
-              maxInitialRequests: 1,    // 最大初始化请求书，默认1
-              name: () => {},              // 名称，此选项课接收 function
-              cacheGroups: {                 // 这里开始设置缓存的 chunks
-                priority: "0",                // 缓存组优先级 false | object |
-                vendor: {                   // key 为entry中定义的 入口名称
-                  chunks: "initial",        // 必须三选一： "initial" | "all" | "async"(默认就是异步)
-                  test: /react|lodash/,     // 正则规则验证，如果符合就提取 chunk
-                  name: "vendor",           // 要缓存的 分隔出来的 chunk 名称
-                  minSize: 0,
-                  minChunks: 1,
-                  enforce: true,
-                  maxAsyncRequests: 1,       // 最大异步请求数， 默认1
-                  maxInitialRequests: 1,    // 最大初始化请求书，默认1
-                  reuseExistingChunk: true   // 可设置是否重用该chunk（查看源码没有发现默认值）
-                }
-              }
-            }
-          },
-         */
   },
   plugins: [
     // 压缩js
@@ -1424,14 +1224,14 @@ const prod = merge({}, baseConf, {
     // 根据模块相对路径生成四位数hash值作为模块id
     new webpack.HashedModuleIdsPlugin(),
 
-    // 将整个文件复制到构建输出指定目录下, 开启这个，我不知道为什么打包后会有一个bulma.css 迷
-    // new CopyWebpackPlugin([
-    //   {
-    //     from: path.resolve(__dirname, '../static'),
-    //     to: prodConf.assetsPath,
-    //     ignore: ['.*']
-    //   }
-    // ]),
+    // 将整个文件复制到构建输出指定目录下
+    new CopyWebpackPlugin([
+      {
+        from: path.resolve(__dirname, '../static'),
+        to: prodConf.assetsPath,
+        ignore: ['.*']
+      }
+    ]),
 
     // html配置
     new HtmlWebpackPlugin({
@@ -1439,15 +1239,6 @@ const prod = merge({}, baseConf, {
       template: path.resolve(__dirname, '../src/index.html'),
       // favicon: path.resolve(__dirname, '../static/favicon.ico'),
       inject: true
-      // 压缩配置
-      // minify: {
-      //     //删除Html注释
-      //     // removeComments: true,
-      //     //去除空格
-      //     collapseWhitespace: true,
-      //     //去除属性引号
-      //     removeAttributeQuotes: true
-      // },
     })
   ]
 });
@@ -1463,22 +1254,18 @@ module.exports = prod;
 
 ```
 webpack.server.conf.js
-```
+```js
 const webpack = require('webpack');
 const path = require('path');
-// const vueLoaderConfig = require('./vue-loader.conf');
 const merge = require('webpack-merge');
 const styleLoader = require('./style-loader');
-// const baseConf = require('../config').base;
 const baseConfig = require('./webpack.base.conf');
 const nodeExternals = require('webpack-node-externals');
 const VueSSRServerPlugin = require('vue-server-renderer/server-plugin');
 const isProd = process.env.NODE_ENV === 'production';
-// const assetsPath = dir => path.posix.join(baseConf.assetsPath, dir);
 
 module.exports = merge(baseConfig, {
   mode: isProd ? 'production' : 'development',
-
   // 这允许 webpack 以 Node 适用方式(Node-appropriate fashion)处理动态导入(dynamic import)，
   // 并且还会在编译 Vue 组件时，
   // 告知 `vue-loader` 输送面向服务器代码(server-oriented code)。
@@ -1526,7 +1313,7 @@ module.exports = merge(baseConfig, {
 
 ```
 config/index.js
-```
+```js
 const path = require('path')
 module.exports = {
   base: {
