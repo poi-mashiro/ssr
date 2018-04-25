@@ -833,7 +833,7 @@ const init = async () => {
 init();
 ```
 npm run dev   使用 nodemon 自动重启服务器  
-注意热更新不支持 nodemon  
+注意 nodemon 可能会导致热更新高延迟  
 使用热更新开发时，请使用 node server/index.js
 
 生产环境 npm run build 然后 npm start
