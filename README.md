@@ -560,7 +560,7 @@ node server/index.js 查看页面
 配置 webpack 以及 使用中间件实现 dev server  可以参考官方 demo
 
 像官方 demo 那样使用中间件 会报 next is undefined 的错误  
-koa2 中使用 需要改写
+koa2 中使用 需要改写  
 build/dev.js
 ```js
 const devMiddleware = require('webpack-dev-middleware');
