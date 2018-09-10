@@ -1,24 +1,30 @@
 {
   "presets": [
     [
-      "env",
+      "@babel/preset-env",
       {
         "targets": {
-          "browsers": ["> 1%", "last 2 versions", "not ie <= 10"]
+          "browsers": [
+            "> 1%",
+            "last 2 versions",
+            "not ie <= 10"
+          ]
         }
       }
     ]
   ],
   "comments": false,
   "plugins": [
-    "transform-vue-jsx",
-    "transform-runtime",
+    "@vue/babel-plugin-transform-vue-jsx",
+    "@babel/plugin-transform-runtime",
     "dynamic-import-node",
-    "syntax-dynamic-import"
+    "@babel/plugin-syntax-dynamic-import"
   ],
   "env": {
     "test": {
-      "presets": ["env"]
+      "presets": [
+        "@babel/preset-env"
+      ]
     }
   }
 }
